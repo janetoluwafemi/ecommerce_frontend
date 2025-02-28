@@ -1,0 +1,159 @@
+/* Global Reset for Form Elements */
+.signup-container {
+    position: relative;
+    left: 360px;
+}
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.signup-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.signup-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h1 {
+    font-size: 36px;
+}
+
+p {
+    font-size: 18px;
+}
+
+.signup-form-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+form {
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    font-size: 16px;
+    color: #333;
+}
+
+input {
+    font-size: 16px;
+}
+/* Image styles for better height and responsiveness */
+.image2 img {
+    width: 100%; /* Make the image take up full width */
+    height: auto; /* Maintain aspect ratio */
+    max-height: 600px; /* Set a maximum height for the image */
+    object-fit: cover; /* Ensure the image covers the container area without distortion */
+}
+
+.image2 {
+    position: relative;
+    top: -500px; /* Adjust the position to suit your layout */
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+/* Adjusting image height for medium screens (tablets) */
+@media (max-width: 768px) {
+    .image2 img {
+        max-height: 400px; /* Reduce max height for tablets */
+    }
+}
+
+/* Adjusting image height for small screens (mobile devices) */
+@media (max-width: 480px) {
+    .image2 img {
+        max-height: 300px; /* Further reduce max height for mobile devices */
+    }
+}
+
+@media (max-width: 768px) {
+    .signup-header h1 {
+        font-size: 28px;
+    }
+
+    .signup-header p {
+        font-size: 16px;
+    }
+
+    .signup-container {
+        padding: 10px;
+    }
+
+    form {
+        padding: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    .form-group button {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .signup-header h1 {
+        font-size: 24px;
+    }
+
+    .signup-header p {
+        font-size: 14px;
+    }
+
+    .signup-container {
+        padding: 5px;
+    }
+
+    .signup-form-container {
+        padding: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    input {
+        font-size: 14px;
+    }
+
+    button {
+        font-size: 16px;
+    }
+}

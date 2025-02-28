@@ -1,0 +1,152 @@
+.App {
+    position: relative;
+    left: 120px;
+}
+div nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    position: sticky;
+    top: 0;
+    left: 0;
+    flex-direction: row;
+    justify-content: center;
+    background-color: white;
+    z-index: 1000;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+div nav ul li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+div nav ul li:last-child {
+    margin-right: 0;
+}
+
+.text {
+    width: 100%;
+    height: auto;
+    position: relative;
+    top: 60px;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 20px;
+    padding-bottom: 20px;
+}
+
+.text2 {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 30px;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.text h1 {
+    font-size: 5rem;
+    position: relative;
+    left: 0;
+}
+
+.text h3 {
+    font-size: 2rem;
+}
+
+.image {
+    position: relative;
+    top: 50px;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+div img {
+    width: 100%;
+    height: auto;
+}
+
+@media (min-width: 768px) {
+    div nav ul {
+        flex-direction: row;
+        justify-content: center;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .text h1 {
+        font-size: 6rem;
+    }
+
+    .text h3 {
+        font-size: 2.2rem;
+    }
+
+    .image {
+        width: 70%;
+        max-width: 350px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 480px) {
+    div nav ul {
+        flex-direction: column;
+        gap: 15px;
+        justify-content: center;
+        align-items: center;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    div nav ul li {
+        margin-right: 0;
+        font-size: 1.2rem;
+    }
+
+    .text h1 {
+        font-size: 3.5rem;
+    }
+
+    .text h3 {
+        font-size: 1.5rem;
+    }
+
+    .image {
+        width: 90%;
+        max-width: 100%;
+    }
+
+    .text2 {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 320px) {
+    .text h1 {
+        font-size: 2.5rem;
+    }
+
+    .text h3 {
+        font-size: 1.2rem;
+    }
+
+    .image {
+        width: 100%;
+    }
+
+    div nav ul li {
+        font-size: 1rem;
+    }
+
+    .text2 {
+        gap: 10px;
+    }
+}
