@@ -1,33 +1,52 @@
 import ProductService from "../services/product-service.js"
 import express from 'express';
 import multer from 'multer'
-import * as fs from "node:fs";
-import UserService from "../services/user-service.js";
-import mongoose, {isValidObjectId} from "mongoose";
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
+import Product from "../models/product-model.js";
+import path from 'path';
+import UserService from "../services/user-service.js";
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
 
 router.post('/createProduct/:userId', upload.single('image'), async (req, res) => {
     try {
-        const { userId } = req.params;
-        if (!userId) {
-            return res.status(400).json({ message: "User ID is required" });
-        }
+        const { name, category, price, description } = req.body;
+        const {userId} = req.params;
+        const image = req.file ? req.file.path : null;
 
-        const productDetails = req.body;
-        productDetails.image = {
-            data: fs.readFileSync(req.file.path),
-            contentType: req.file.mimetype,
-        };
+        if (!image) {
+            return res.status(400).json({ error: 'Image file is required' });
+        }
+        const product = new Product({
+            name,
+            category,
+            price,
+            description,
+            image,
+            userId: req.params.userId
+        });
         const productService = new ProductService();
-        const newProduct = await productService.addProduct(userId, productDetails);
-        res.status(201).json({ productId: newProduct });
+        const productId = productService.addProduct(userId, req.body);
+        // res.json({ productId: savedProduct._id });
+        if (productId instanceof Error) {
+            return res.status(404).json({ message: productId.message });
+        }
+        return res.status(200).json({ productId });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Error creating product", error: error.message });  // Improved error handling
+        console.error('Error creating product:', error);
+        res.status(500).json({ error: 'Error creating product: ' + error.message });
     }
 });
+
 router.put("/updateProduct", async (req, res) => {
     try {
         const productService = new ProductService();
@@ -38,25 +57,6 @@ router.put("/updateProduct", async (req, res) => {
         res.status(500).json({message: "Error updating product", error});
     }
 })
-
-// router.delete("/product/:productId", async (req, res) => {
-//     try {
-//         const { productId } = req.params;
-//
-//         if (!productId) {
-//             return res.status(400).json({ message: "Product not found" });
-//         }
-//         const productService = new ProductService();
-//         const deletedProduct = await productService.deleteProduct(productId);
-//         if (!deletedProduct) {
-//             return res.status(404).json({ message: "Product not found" });
-//         }
-//         return res.status(200).json({message: "Product deleted successfully"});
-//     }
-//     catch (error) {
-//         return res.status(500).json({message: "Error deleting product", error});
-//     }
-// })
 
 router.delete("/product/:productId", async (req, res) => {
     try {

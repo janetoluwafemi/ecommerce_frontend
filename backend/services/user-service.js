@@ -25,10 +25,10 @@ class UserService {
             throw new Error(err.message);
         }
     }
-    async createProduct(product){
+    async createProduct(userId, product){
         try {
             const productService = new ProductService();
-            return await productService.addProduct(product)
+            return await productService.addProduct(userId, product)
         }
         catch (error) {
             throw new Error(error.message);

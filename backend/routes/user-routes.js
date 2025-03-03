@@ -6,6 +6,8 @@ import multer from "multer";
 import CartService from "../services/cart-service.js";
 import ProductService from "../services/product-service.js";
 import mongoose, {isValidObjectId} from "mongoose";
+import User from "../models/user-model.js";
+import Product from "../models/product-model.js";
 const upload = multer({ dest: 'uploads/' });
 
 async function checkUserExists(req, res, next) {
@@ -20,6 +22,30 @@ async function checkUserExists(req, res, next) {
     }
 }
 
+// router.post('/users', async (req, res) => {
+//     try {
+//         const { firstName, lastName, phoneNumber, email, password, accountNumber, address} = req.body;
+//
+//         if (!firstName || !lastName || !phoneNumber || !email || !password || !accountNumber || !address) {
+//             return res.status(400).json({ message: "All fields are required." });
+//         }
+//
+//         const userService = new UserService();
+//         const userId = await userService.createUser(req.body);
+//         console.log("Returned User ID (String):", userId);
+//
+//         return res.status(201).json({ message: "User created successfully", userId: userId });
+//     } catch (error) {
+//         if (error.message === 'Email or Phone Number already in use.') {
+//             return res.status(400).json({ message: 'Email or Phone Number already in use.' });
+//         }
+//         console.error("Error creating user:", error);
+//         return res.status(500).json({ message: "Error creating user", error: error.message });
+//     }
+// });
+import jwt from 'jsonwebtoken'; // Import jsonwebtoken
+
+// Your POST /users route
 router.post('/users', async (req, res) => {
     try {
         const { firstName, lastName, phoneNumber, email, password, accountNumber, address} = req.body;
@@ -31,8 +57,13 @@ router.post('/users', async (req, res) => {
         const userService = new UserService();
         const userId = await userService.createUser(req.body);
         console.log("Returned User ID (String):", userId);
+        const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        return res.status(201).json({ message: "User created successfully", userId: userId });
+        return res.status(201).json({
+            message: "User created successfully",
+            userId: userId,
+            token: token
+        });
     } catch (error) {
         if (error.message === 'Email or Phone Number already in use.') {
             return res.status(400).json({ message: 'Email or Phone Number already in use.' });
@@ -42,33 +73,68 @@ router.post('/users', async (req, res) => {
     }
 });
 
+
 router.post('/createProduct/:userId', upload.single('image'), async (req, res) => {
     try {
-        const { userId } = req.params;
-        if (!userId) {
-            return res.status(400).json({ message: "User ID is required" });
+        const { name, category, price, description } = req.body;
+        const {userId} = req.params;
+        const image = req.file ? req.file.path : null;
+
+        if (!image) {
+            return res.status(400).json({ error: 'Image file is required' });
         }
-
-        const productDetails = req.body;
-        productDetails.image = {
-            data: fs.readFileSync(req.file.path),
-            contentType: req.file.mimetype,
-        };
-
+        const product = new Product({
+            name,
+            category,
+            price,
+            description,
+            image,
+            userId: req.params.userId
+        });
         const userService = new UserService();
-        const newProduct = await userService.createProduct(userId, productDetails);
-        res.status(201).json({ productId: newProduct });
+        const productId = userService.createProduct(userId, req.body);
+        // res.json({ productId: savedProduct._id });
+        if (productId instanceof Error) {
+            return res.status(404).json({ message: productId.message });
+        }
+        return res.status(200).json({ productId });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Error creating product", error: error.message });  // Improved error handling
+        console.error('Error creating product:', error);
+        res.status(500).json({ error: 'Error creating product: ' + error.message });
     }
 });
+
+// router.post('/createProduct/:userId', upload.single('image'), async (req, res) => {
+//     try {
+//         const { name, category, price, description } = req.body;
+//         const { userId } = req.params;
+//         const image = req.file ? req.file.path : null;
+//
+//         if (!image) {
+//             return res.status(400).json({ error: 'Image file is required' });
+//         }
+//         const product = new Product({
+//             name,
+//             category,
+//             price,
+//             description,
+//             image,
+//             userId: userId,
+//         });
+//         const savedProduct = await product.save();
+//         console.log("Saved product:", savedProduct);
+//         return res.status(200).json({
+//             productId: savedProduct._id,
+//         });
+//
+//     } catch (err) {
+//         console.error('Error creating product:', err);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+// });
 router.delete("/product/:productId", async (req, res) => {
     try {
         const { productId } = req.params;
-        // if (!mongoose.Types.ObjectId.isValid(productId)) {
-        //     return res.status(400).json({ message: "Invalid Product ID format" });
-        // }
         if (!productId) {
             return res.status(400).json({ message: "Product ID is required" });
         }

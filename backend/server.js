@@ -4,6 +4,7 @@ import cors from 'cors';
 import userRoutes from './routes/user-routes.js';
 import productRoutes from './routes/product-routes.js';
 import cardRoutes from './routes/cart-routes.js';
+import paymentRoutes from './routes/payment-routes.js';
 
 const app = express();
 
@@ -21,7 +22,7 @@ mongoose.connect('mongodb://localhost:27017/myapp', { useNewUrlParser: true, use
 app.use('/api', userRoutes);
 app.use('/api', productRoutes);
 app.use('/api', cardRoutes);
-
+app.use('/api', paymentRoutes);
 app.listen(8083, () => {
     console.log('Server is running on http://localhost:8083');
 });

@@ -20,6 +20,7 @@ class PayStackPaymentService {
                     Authorization: `Bearer ${this.secretKey}`,
                 },
             });
+
             if (response.status === 200) {
                 const responseBody = response.data;
                 if (responseBody.status) {
@@ -54,6 +55,7 @@ class PayStackPaymentService {
             return { error: `Network error occurred: ${error.message}` };
         }
     }
+
 }
 
 export default PayStackPaymentService

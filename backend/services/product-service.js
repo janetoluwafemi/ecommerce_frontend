@@ -11,16 +11,16 @@ class ProductService {
             }
             const productInstance = new Product(product);
             console.log("Saving product with data:", product);
+
             const savedProduct = await productInstance.save();
             console.log("Product created and saved:", savedProduct);
-            await new Promise(resolve => setTimeout(resolve, 500));
+
             return savedProduct._id;
-        } catch (error) {
-            console.error("Error creating product:", error);
-            throw new Error('Error creating product');
+        } catch (err) {
+            console.error("Error creating product:", err.message);
+            throw new Error('Error creating product: ' + err.message);
         }
     }
-
 
     async updateProduct(data) {
         const product = await Product.findById(data._id);
