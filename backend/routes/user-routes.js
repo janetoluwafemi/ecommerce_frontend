@@ -3,9 +3,10 @@ const router = express.Router();
 import UserService from '../services/user-service.js'
 import fs from "node:fs";
 import multer from "multer";
+import CartService from "../services/cart-service.js";
 import ProductService from "../services/product-service.js";
+import mongoose, {isValidObjectId} from "mongoose";
 const upload = multer({ dest: 'uploads/' });
-
 
 async function checkUserExists(req, res, next) {
     try {
@@ -41,32 +42,48 @@ router.post('/users', async (req, res) => {
     }
 });
 
-router.post('/createProduct', upload.single('image'), async (req, res) => {
+router.post('/createProduct/:userId', upload.single('image'), async (req, res) => {
     try {
+        const { userId } = req.params;
+        if (!userId) {
+            return res.status(400).json({ message: "User ID is required" });
+        }
+
         const productDetails = req.body;
         productDetails.image = {
             data: fs.readFileSync(req.file.path),
             contentType: req.file.mimetype,
         };
+
         const userService = new UserService();
-        const newProduct = await userService.createProduct(productDetails);
+        const newProduct = await userService.createProduct(userId, productDetails);
         res.status(201).json({ productId: newProduct });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error creating product", error });
+        res.status(500).json({ message: "Error creating product", error: error.message });  // Improved error handling
     }
 });
-
-router.delete("/deleteProduct", async (req, res) => {
+router.delete("/product/:productId", async (req, res) => {
     try {
+        const { productId } = req.params;
+        // if (!mongoose.Types.ObjectId.isValid(productId)) {
+        //     return res.status(400).json({ message: "Invalid Product ID format" });
+        // }
+        if (!productId) {
+            return res.status(400).json({ message: "Product ID is required" });
+        }
+
         const userService = new UserService();
-        await userService.deleteProduct(req.params.id);
-        res.status(200).json({message: "Product deleted successfully"});
+        const deletedProduct = await userService.deleteProduct(productId);
+        if (!deletedProduct) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+        return res.status(200).json({ message: "Product deleted successfully" });
+    } catch (error) {
+        console.error('Error in delete route:', error);
+        return res.status(500).json({ message: "Error deleting product", error: error.message });
     }
-    catch (error) {
-        res.status(500).json({message: "Error deleting product", error});
-    }
-})
+});
 
 router.get("/product/:name", async (req, res) => {
     try {
@@ -86,5 +103,40 @@ router.get("/product/:name", async (req, res) => {
         return res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }
 })
+
+router.post('/addProduct/:userId/:productId', async (req, res) => {    try {
+    const { userId, productId } = req.params;
+    const { name } = req.body;
+
+    if (!userId || !productId || !name) {
+        return res.status(400).json({ message: "Missing required fields: userId, productId, name" });
+    }
+    const userService = new UserService();
+    const cart = await userService.addProductToCart(productId, userId, name);
+
+    res.status(201).json({ message: "Product added to cart", cart });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error adding product", error });
+    }
+});
+
+router.delete('/deleteProduct/:userId/:productId', async (req, res) => {
+    try {
+        const { userId, productId } = req.params;
+        const { name } = req.body;
+        if (!productId || !userId || !name) {
+            return res.status(400).json({ message: "Missing required fields: userId, productId, name" });
+        }
+        const userService = new UserService();
+        const result = await userService.deleteProductFromCart(productId, userId, name);
+        res.status(201).json({ message: "Product deleted from cart", data: result});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error deleting product", error });
+    }
+});
+
+
 
 export default router

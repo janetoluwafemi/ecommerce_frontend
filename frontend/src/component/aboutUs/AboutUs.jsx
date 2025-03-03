@@ -12,6 +12,8 @@ function AboutUs() {
                         <Link to="/create_product">Create Product</Link>
                         <Link to="/delete_product">Delete Product</Link>
                         <Link to="/find_product">Find Product</Link>
+                        <Link to="/add_to_cart">Add To Cart</Link>
+                        <Link to="/delete_from_cart">Delete From Cart</Link>
                     </ul>
                 </nav>
             </div>

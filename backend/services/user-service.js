@@ -43,19 +43,19 @@ class UserService {
             throw new Error(error.message);
         }
     }
-    async addProductToCart(productId, userId, quantity) {
+    async addProductToCart(productId, userId, name) {
         try {
             const cartService = new CartService();
-            return await cartService.addToCart(productId, userId, quantity);
+            return await cartService.addToCart(productId, userId, name);
         }
         catch (err) {
             throw new Error(err.message);
         }
     }
-    async deleteProductFromCart(productId, quantity, userId) {
+    async deleteProductFromCart(productId, name, userId) {
         try {
             const cartService = new CartService();
-            return await cartService.deleteProductFromCart(productId, quantity, userId);
+            return await cartService.deleteProductFromCart(productId, name, userId);
         }
         catch (err) {
             throw new Error(err.message);

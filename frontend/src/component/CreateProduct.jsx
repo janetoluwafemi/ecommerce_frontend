@@ -8,6 +8,7 @@ function CreateProduct() {
     const [category, setCategory] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
+    const [userId, setUserId] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -23,13 +24,21 @@ function CreateProduct() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!name || !category || !price || !description || !image) {
+
+
+        setUserId(sessionStorage.getItem('userId'));
+
+        setUserId(localStorage.getItem('userId'))
+
+        if (!userId) {
+            setError('User is not logged in. Please log in first.');
+            setLoading(false);
+            return;
+        }
+        if (!userId || !name || !category || !price || !description || !image) {
             alert("All fields must be filled.");
             return;
         }
-
-        setLoading(true);
-        setError('');
 
         const formData = new FormData();
         formData.append('name', name);
@@ -38,19 +47,22 @@ function CreateProduct() {
         formData.append('description', description);
         formData.append('image', image);
 
+        setLoading(true);
+        setError('');
+        console.log("Form is being submitted!");
         try {
-            const response = await axios.post('http://localhost:8083/api/createProduct', formData, {
+            const response = await axios.post(`http://localhost:8083/api/createProduct/${userId}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
+
             const productId = response.data.productId;
             sessionStorage.setItem('productId', productId);
             localStorage.setItem('productId', productId);
             console.log('Product created successfully:', response.data);
             alert("Product created successfully!");
             window.location.href = "/delete_product";
-            console.log(sessionStorage, 'hiiii')
         } catch (error) {
             console.error('Error creating product:', error);
             setError("Error creating product");

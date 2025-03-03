@@ -2,7 +2,7 @@ import Cart from '../models/cart-model.js';
 import Product from '../models/product-model.js';
 
 class CartService {
-    async addToCart(productId, userId, quantity) {
+    async addToCart(productId, userId, name) {
         try {
             let cart = await Cart.findOne({ userId });
             if (!cart) {
@@ -15,9 +15,9 @@ class CartService {
             }
             const existingItem = cart.items.find(item => item.productId.toString() === productId);
             if (existingItem) {
-                existingItem.quantity += quantity;
+                existingItem.name += name;
             } else {
-                cart.items.push({ productId, quantity });
+                cart.items.push({ productId, name });
             }
             await cart.save();
             return cart;
@@ -27,7 +27,7 @@ class CartService {
         }
     }
 
-    async deleteProductFromCart(productId, quantity, userId) {
+    async deleteProductFromCart(userId, productId, name) {
         try {
             let cart = await Cart.findOne({ userId });
             if (!cart) {
@@ -37,8 +37,8 @@ class CartService {
             if (!existingItem) {
                 return  new Error(`Product with id ${productId} is not in the cart.`);
             }
-            existingItem.quantity -= quantity;
-            if (existingItem.quantity <= 0) {
+            existingItem.name -= name;
+            if (existingItem.name <= 0) {
                 cart.items = cart.items.filter(item => item.productId.toString() !== productId);
             }
             return await cart.save();
@@ -49,4 +49,3 @@ class CartService {
 }
 
 export default CartService
-

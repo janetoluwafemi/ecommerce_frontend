@@ -10,10 +10,18 @@ function FindProduct() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const userId = localStorage.getItem('userId');
+
+        if (!userId) {
+            setError('User is not logged in. Please log in first.');
+            setLoading(false);
+            return;
+        }
         console.log('Form submitted with name:', name);
 
         if (!name) {
-            alert("Please enter a card name.");
+            alert("Please enter a Product name.");
             return;
         }
 
@@ -23,7 +31,7 @@ function FindProduct() {
         setProductId('');
 
         try {
-            const url = `http://localhost:8083/api/product/${name}`;
+            const url = `http://localhost:8083/api/product/${userId}${name}`;
             console.log('Making API request to:', url);
 
             const response = await axios.get(url);
@@ -31,18 +39,18 @@ function FindProduct() {
 
             if (response.data && response.data.productId) {
                 setProductId(response.data.productId);
-                setMessage(`Card ID found: ${response.data.productId}`);
+                setMessage(`Product ID found: ${response.data.productId}`);
 
-                localStorage.setItem('cardId', response.data.productId);
-                console.log('Card found successfully:', response.data);
+                localStorage.setItem('productId', response.data.productId);
+                console.log('Product found successfully:', response.data);
                 window.location.href = "/delete_product";
                 console.log(sessionStorage, 'hiiii')
             } else {
-                setError('Card not found.');
+                setError('Product not found.');
             }
         } catch (error) {
-            console.error('There was an error finding the card!', error);
-            setError(`Failed to find the card. ${error.message || 'Please try again.'}`);
+            console.error('There was an error finding the product!', error);
+            setError(`Failed to find the product. ${error.message || 'Please try again.'}`);
         } finally {
             setLoading(false);
         }
