@@ -25,7 +25,6 @@ router.post('/payment', verifyToken, async (req, res) => {
     try {
         const paymentRequest = req.body;
 
-        // Validate payment request
         if (!paymentRequest.email || !paymentRequest.amount) {
             return res.status(400).json({ error: 'Email and amount are required.' });
         }

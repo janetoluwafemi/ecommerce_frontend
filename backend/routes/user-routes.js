@@ -45,7 +45,6 @@ async function checkUserExists(req, res, next) {
 // });
 import jwt from 'jsonwebtoken'; // Import jsonwebtoken
 
-// Your POST /users route
 router.post('/users', async (req, res) => {
     try {
         const { firstName, lastName, phoneNumber, email, password, accountNumber, address} = req.body;
@@ -104,34 +103,6 @@ router.post('/createProduct/:userId', upload.single('image'), async (req, res) =
     }
 });
 
-// router.post('/createProduct/:userId', upload.single('image'), async (req, res) => {
-//     try {
-//         const { name, category, price, description } = req.body;
-//         const { userId } = req.params;
-//         const image = req.file ? req.file.path : null;
-//
-//         if (!image) {
-//             return res.status(400).json({ error: 'Image file is required' });
-//         }
-//         const product = new Product({
-//             name,
-//             category,
-//             price,
-//             description,
-//             image,
-//             userId: userId,
-//         });
-//         const savedProduct = await product.save();
-//         console.log("Saved product:", savedProduct);
-//         return res.status(200).json({
-//             productId: savedProduct._id,
-//         });
-//
-//     } catch (err) {
-//         console.error('Error creating product:', err);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// });
 router.delete("/product/:productId", async (req, res) => {
     try {
         const { productId } = req.params;

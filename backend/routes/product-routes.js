@@ -4,7 +4,6 @@ import multer from 'multer'
 const router = express.Router();
 import Product from "../models/product-model.js";
 import path from 'path';
-import UserService from "../services/user-service.js";
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
